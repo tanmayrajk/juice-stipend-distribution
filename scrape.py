@@ -18,10 +18,10 @@ def extract_cheapest_price(dep_airport, arr_airport):
         full_url = base_url + params
         page.goto(full_url)
         page.wait_for_load_state('networkidle')
-        cheapest_card_text = page.wait_for_selector("div#M7sBEb", timeout=2000).inner_text()
         html_content = page.content()
         with open("page.html", "w", encoding="utf-8") as file:
             file.write(html_content)
+        cheapest_card_text = page.wait_for_selector("div#M7sBEb", timeout=2000).inner_text()
         browser.close()
 
         match = re.search(r"\$\d{1,3}(?:,\d{3})*", cheapest_card_text)
