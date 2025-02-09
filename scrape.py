@@ -20,7 +20,7 @@ def extract_cheapest_price(dep_airport, arr_airport):
         page.wait_for_load_state('networkidle')
         try:
             page.wait_for_selector('button[aria-label="Accept all"]', timeout=2000).click()
-            page.screenshot(path="debug.png", full_page=True)
+            page.wait_for_load_state('networkidle')
         except:
             pass
 
