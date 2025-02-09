@@ -15,7 +15,8 @@ with open("airports.json", "r", encoding="utf-8") as file:
                 if (price == 0): continue
                 total_airports += 1
                 total_cost += price
-            except:
+            except Exception as e:
+                print(e)
                 print("Skipping...")
         if total_cost == 0 or total_airports == 0:
              continue
