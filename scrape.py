@@ -14,6 +14,7 @@ def extract_cheapest_price(dep_airport, arr_airport):
         full_url = base_url + params
         page.goto(full_url)
         page.wait_for_load_state('networkidle')
+        page.screenshot(path="full_page.png", full_page=True)
         cheapest_card = page.wait_for_selector("text=Cheapest", timeout=1000)
         cheapest_card_text = cheapest_card.inner_text()
         browser.close()
