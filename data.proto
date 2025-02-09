@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+message Airport {
+    string name = 2;
+}
+
+message FlightInfo {
+    string date = 2;
+    Airport dep_airport = 13;
+    Airport arr_airport = 14;
+}
+
+message Flight {
+    repeated FlightInfo flights = 3;
+}
