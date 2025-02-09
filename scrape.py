@@ -4,7 +4,7 @@ import re
 
 def extract_cheapest_price(dep_airport, arr_airport):
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=False)
         page = browser.new_page()
         page.set_extra_http_headers({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -14,10 +14,12 @@ def extract_cheapest_price(dep_airport, arr_airport):
         full_url = base_url + params
         page.goto(full_url)
         page.wait_for_load_state('networkidle')
-        cheapest_card_text = page.wait_for_selector("div#M7sBEb", timeout=2000).inner_text()
+        cheapest_card = page.wait_for_selector("text=Cheapest", timeout=1000)
+        cheapest_card_text = cheapest_card.inner_text()
         browser.close()
 
         match = re.search(r"\$\d{1,3}(?:,\d{3})*", cheapest_card_text)
+        print(match.group())
         
         if match:
             return int(match.group().removeprefix("$").replace(",", ""))
