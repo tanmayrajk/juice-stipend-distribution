@@ -1,13 +1,18 @@
 from playwright.sync_api import sync_playwright
 from tfs import get_b64_encoded_tfs
 import re
+import json
 
 def extract_cheapest_price(dep_airport, arr_airport):
+    with open("cookies.json", "r") as f:
+        cookies = json.load(f)
+
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=False)
         context = browser.new_context(
             viewport={"width": 1280, "height": 720}
         )
+        context.add_cookies(cookies)
         page = context.new_page()
         page.set_extra_http_headers({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -17,14 +22,10 @@ def extract_cheapest_price(dep_airport, arr_airport):
         full_url = base_url + params
         page.goto(full_url)
         page.wait_for_load_state('networkidle')
-        page.screenshot(path="full_page.png", full_page=True)
-        # click the accept cookie button hopefully
-        try:
-            page.wait_for_selector("text=Accept all", timeout=500).click()
-        except:
-            pass
-        cheapest_card = page.wait_for_selector("text=Cheapest", timeout=500)
-        cheapest_card_text = cheapest_card.inner_text()
+        cheapest_card_text = page.wait_for_selector("div#M7sBEb", timeout=2000).inner_text()
+        cookies = page.context.cookies()
+        # with open("cookies.json", "w") as f:
+        #     json.dump(cookies, f)
         browser.close()
 
         match = re.search(r"\$\d{1,3}(?:,\d{3})*", cheapest_card_text)
