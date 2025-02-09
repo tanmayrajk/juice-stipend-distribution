@@ -5,7 +5,10 @@ import re
 def extract_cheapest_price(dep_airport, arr_airport):
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+        context = browser.new_context(
+            viewport={"width": 1280, "height": 720}
+        )
+        page = context.new_page()
         page.set_extra_http_headers({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         })
@@ -16,8 +19,11 @@ def extract_cheapest_price(dep_airport, arr_airport):
         page.wait_for_load_state('networkidle')
         page.screenshot(path="full_page.png", full_page=True)
         # click the accept cookie button hopefully
-        page.wait_for_selector("text=Accept all", timeout=1000).click()
-        cheapest_card = page.wait_for_selector("text=Cheapest", timeout=1000)
+        try:
+            page.wait_for_selector("text=Accept all", timeout=500).click()
+        except:
+            pass
+        cheapest_card = page.wait_for_selector("text=Cheapest", timeout=500)
         cheapest_card_text = cheapest_card.inner_text()
         browser.close()
 
