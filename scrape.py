@@ -19,12 +19,12 @@ def extract_cheapest_price(dep_airport, arr_airport):
         page.goto(full_url)
         page.wait_for_load_state('networkidle')
         try:
-            page.wait_for_selector('button[aria-label="Accept all"]', timeout=2000).click()
+            page.wait_for_selector('button[aria-label="Accept all"]', timeout=100).click()
             page.wait_for_load_state('networkidle')
         except:
             pass
 
-        cheapest_card_text = page.wait_for_selector("div#M7sBEb", timeout=2000).inner_text()
+        cheapest_card_text = page.wait_for_selector("div#M7sBEb", timeout=100).inner_text()
         browser.close()
 
         match = re.search(r"\$\d{1,3}(?:,\d{3})*", cheapest_card_text)
